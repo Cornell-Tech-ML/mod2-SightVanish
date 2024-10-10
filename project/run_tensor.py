@@ -22,26 +22,26 @@ class Network(minitorch.Module):
         self.layer1 = Linear(2, hidden_layers)
         self.layer2 = Linear(hidden_layers, hidden_layers)
         self.layer3 = Linear(hidden_layers, 1)
-        
+
     def forward(self, x: Tensor) -> Tensor:
         hidden1 = self.layer1.forward(x).relu()
         hidden2 = self.layer2.forward(hidden1).relu()
         return self.layer3.forward(hidden2).sigmoid()
-        
+
 
 class Linear(minitorch.Module):
     def __init__(self, in_size: int, out_size: int):
         super().__init__()
         self.weights = RParam(in_size, out_size)
         self.bias = RParam(out_size)
-        
+
     def forward(self, x: Tensor) -> Tensor:
         # use broadcasting to multiply x by weights
         broadcast_x = x.view(*x.shape, 1) # shape = (50, 2, 1)
         broadcast_weight = self.weights.value.view(1, *self.weights.value.shape) # shape = (1, 2, 2)
         in_size, out_size = x.shape[0], self.weights.value.shape[1]
         return (broadcast_x * broadcast_weight).sum(1).view(in_size, out_size) + self.bias.value.view(1, *self.bias.value.shape)
-        
+
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
 

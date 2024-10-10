@@ -117,12 +117,15 @@ class Mul(Function):
         """Multiply two tensors element-wise."""
         ctx.save_for_backward(a, b)
         return a.f.mul_zip(a, b)
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Backward of tensor Mul."""
         a, b = ctx.saved_values
-        return grad_output.f.mul_zip(grad_output, b), grad_output.f.mul_zip(grad_output, a)
+        return grad_output.f.mul_zip(grad_output, b), grad_output.f.mul_zip(
+            grad_output, a
+        )
+
 
 class Sigmoid(Function):
     @staticmethod
@@ -131,26 +134,30 @@ class Sigmoid(Function):
         out = a.f.sigmoid_map(a)
         ctx.save_for_backward(out)
         return out
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         """Backward of tensor Sigmoid."""
         # may be wrong with "1.0 - "
         (sigma,) = ctx.saved_values
-        return grad_output.f.mul_zip(grad_output.f.mul_zip(sigma, (1.0 - sigma)), grad_output)
-    
+        return grad_output.f.mul_zip(
+            grad_output.f.mul_zip(sigma, (1.0 - sigma)), grad_output
+        )
+
+
 class ReLU(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor) -> Tensor:
         """ReLU function for tensor."""
         ctx.save_for_backward(a)
         return a.f.relu_map(a)
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         """Backward of tensor ReLU."""
         (a,) = ctx.saved_values
         return grad_output.f.relu_back_zip(a, grad_output)
+
 
 class Log(Function):
     @staticmethod
@@ -158,13 +165,14 @@ class Log(Function):
         """Log function for tensor."""
         ctx.save_for_backward(a)
         return a.f.log_map(a)
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         """Backward of tensor Log."""
-        (a,) = ctx.saved_values    
+        (a,) = ctx.saved_values
         return grad_output.f.log_back_zip(a, grad_output)
-    
+
+
 class Exp(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor) -> Tensor:
@@ -172,45 +180,49 @@ class Exp(Function):
         out = a.f.exp_map(a)
         ctx.save_for_backward(out)
         return out
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
         """Backward of tensor Exp."""
         (out,) = ctx.saved_values
         return grad_output.f.mul_zip(grad_output, out)
 
+
 class Sum(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
         """Sum function for tensor."""
         return a.f.add_reduce(a, int(dim.item()))
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
         """Backward of tensor Sum."""
         return grad_output, 0.0
+
 
 class LT(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, b: Tensor) -> Tensor:
         """Less than function for tensor."""
         return a.f.lt_zip(a, b)
-    
-    @ staticmethod
+
+    @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Backward of tensor LT."""
         return zeros(grad_output.shape), zeros(grad_output.shape)
+
 
 class EQ(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, b: Tensor) -> Tensor:
         """Equal function for tensor."""
         return a.f.eq_zip(a, b)
-    
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Backward of tensor EQ."""
         return zeros(grad_output.shape), zeros(grad_output.shape)
+
 
 class IsClose(Function):
     @staticmethod
@@ -218,13 +230,17 @@ class IsClose(Function):
         """Is close function for tensor."""
         return a.f.is_close_zip(a, b)
 
+
 class Permute(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, order: Tensor) -> Tensor:
         """Permute the dimensions of the tensor."""
         ctx.save_for_backward(order)
-        return minitorch.Tensor(a._tensor.permute(*[int(i) for i in order._tensor._storage]), backend=a.backend)
-    
+        return minitorch.Tensor(
+            a._tensor.permute(*[int(i) for i in order._tensor._storage]),
+            backend=a.backend,
+        )
+
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
         """Backward of tensor Permute."""

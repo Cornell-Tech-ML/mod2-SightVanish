@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+
 # from turtle import shearfactor
 from typing import Iterable, Optional, Sequence, Tuple, Union
 
@@ -92,7 +93,7 @@ def broadcast_index(
             out_index[-i] = 0
         else:
             out_index[-i] = big_index[-i]
-    
+
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     """Broadcast two shapes to create a new union shape.
@@ -112,7 +113,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     if len(shape2) > len(shape1):
         shape1, shape2 = shape2, shape1
     shape2 = [1] * (len(shape1) - len(shape2)) + list(shape2)
-    
+
     for i in range(len(shape1)):
         if shape1[i] != shape2[i] and shape1[i] != 1 and shape2[i] != 1:
             raise IndexingError(f"Cannot broadcast shapes {shape1} and {shape2}")
@@ -256,9 +257,8 @@ class TensorData:
         return TensorData(
             self._storage,
             tuple([self.shape[i] for i in order]),
-            tuple([self.strides[i] for i in order])
-        )   
-            
+            tuple([self.strides[i] for i in order]),
+        )
 
     def to_string(self) -> str:
         """Convert to string"""
