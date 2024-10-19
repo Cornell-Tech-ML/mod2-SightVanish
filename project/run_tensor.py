@@ -13,7 +13,6 @@ def RParam(*shape):
     r = 2 * (minitorch.rand(shape) - 0.5)
     return minitorch.Parameter(r)
 
-# TODO: Implement for Task 2.5.
 
 class Network(minitorch.Module):
     def __init__(self, hidden_layers: int):
@@ -38,9 +37,9 @@ class Linear(minitorch.Module):
     def forward(self, x: Tensor) -> Tensor:
         # use broadcasting to multiply x by weights
         broadcast_x = x.view(*x.shape, 1) # shape = (50, 2, 1)
-        broadcast_weight = self.weights.value.view(1, *self.weights.value.shape) # shape = (1, 2, 2)
-        in_size, out_size = x.shape[0], self.weights.value.shape[1]
-        return (broadcast_x * broadcast_weight).sum(1).view(in_size, out_size) + self.bias.value.view(1, *self.bias.value.shape)
+        # broadcast_weight = self.weights
+        in_size, out_size = x.shape[0], self.weights.value.shape[1] # 50, 2
+        return (broadcast_x * self.weights.value).sum(1).view(in_size, out_size) + self.bias.value
 
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
@@ -96,7 +95,4 @@ if __name__ == "__main__":
     HIDDEN = 2
     RATE = 1
     data = minitorch.datasets["Simple"](PTS)
-    # TensorTrain(HIDDEN).train(data, RATE)
-    x = minitorch.tensor([[1,2,3],[4,5,6]])
-    for i in x._tensor.indices():
-        print(i)
+    TensorTrain(HIDDEN).train(data, RATE)
