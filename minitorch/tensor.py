@@ -386,4 +386,4 @@ class Tensor:
 
     def view(self, *shape: int) -> Tensor:
         """Change the shape of the tensor."""
-        return View.apply(self, tensor(shape))
+        return View.apply(self, tensor(list(shape)))

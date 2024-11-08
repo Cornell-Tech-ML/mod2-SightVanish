@@ -116,7 +116,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
 
     for i in range(len(shape1)):
         if shape1[i] != shape2[i] and shape1[i] != 1 and shape2[i] != 1:
-            raise IndexingError(f"Cannot broadcast shapes {shape1} and {shape2}")
+            raise IndexingError(f"Broadcast failed {shape1} {shape2}")
         else:
             broadcasted_shape.append(max(shape1[i], shape2[i]))
     return tuple(broadcasted_shape)
