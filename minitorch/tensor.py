@@ -378,7 +378,7 @@ class Tensor:
         if dim is None:
             return self.sum() / self.size
         else:
-            return self.sum(dim) / self.shape[int(self._ensure_tensor(dim).item())]
+            return self.sum(dim) / self.shape[dim]
 
     def permute(self, *order: int) -> Tensor:
         """Permute the dimensions of the tensor."""
