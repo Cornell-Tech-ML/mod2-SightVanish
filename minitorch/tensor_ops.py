@@ -262,7 +262,7 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         out_index: Index = np.zeros(len(out_shape), dtype=np.int32)
-        in_index: Index = np.zeros(len(out_shape), dtype=np.int32)
+        in_index: Index = np.zeros(len(in_shape), dtype=np.int32)
         # go through all index, starting from [0,0,0]
         for ordinal in range(len(out)):
             # ordinal -> index
@@ -316,8 +316,8 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         out_index: Index = np.zeros(len(out_shape), dtype=np.int32)
-        a_index: Index = np.zeros(len(out_shape), dtype=np.int32)
-        b_index: Index = np.zeros(len(out_shape), dtype=np.int32)
+        a_index: Index = np.zeros(len(a_shape), dtype=np.int32)
+        b_index: Index = np.zeros(len(b_shape), dtype=np.int32)
         # go through all index, starting from [0,0,0]
         for ordinal in range(len(out)):
             # ordinal -> index
