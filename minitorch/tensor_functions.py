@@ -141,9 +141,7 @@ class Sigmoid(Function):
         """Backward of tensor Sigmoid."""
         # may be wrong with "1.0 - "
         (sigma,) = ctx.saved_values
-        return grad_output.f.mul_zip(
-            grad_output.f.mul_zip(sigma, (1.0 - sigma)), grad_output
-        )
+        return sigma * (-sigma + 1.0) * grad_output
 
 
 class ReLU(Function):
@@ -165,7 +163,8 @@ class Log(Function):
     def forward(ctx: Context, a: Tensor) -> Tensor:
         """Log function for tensor."""
         ctx.save_for_backward(a)
-        return a.f.log_map(a)
+        out = a.f.log_map(a)
+        return out
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
